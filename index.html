@@ -182,11 +182,16 @@
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 12px;
+            /* Змінено: Збільшення закруглення для всіх кнопок */
+            border-radius: 14px;
             font-size: 17px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            /* Додано: Для посилань-кнопок, щоб прибрати підкреслення */
+            text-decoration: none; 
+            display: block;
+            text-align: center;
         }
 
         .submit-button:hover {
@@ -201,8 +206,12 @@
         /* Стиль для нової чорної кнопки */
         .bankid-button {
             background-color: var(--black);
-            margin-top: 15px;
-            border-radius: 12px;
+            /* Змінено: Збільшено margin-top, щоб опустити кнопку нижче */
+            margin-top: 25px; 
+            /* Змінено: Збільшено закруглення */
+            border-radius: 18px;
+            /* Прибрано підкреслення (хоча воно вже є у .submit-button, це для гарантії) */
+            text-decoration: none; 
         }
 
         .bankid-button:hover {
